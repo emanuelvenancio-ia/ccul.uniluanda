@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4ª Conferência UniLuanda | Pagamentos e Inscrições</title>
+    <link rel="icon" type="image/x-icon" href="ccul.jpg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #fcfcfc; }
+        .tab-active { border-bottom: 3px solid #d97706; color: #d97706; background-color: #fffbeb; }
+        .loading-spinner { border: 3px solid #f3f3f3; border-top: 3px solid #d97706; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* Transições suaves para os campos dinâmicos */
+        .dynamic-section { transition: all 0.3s ease-in-out; overflow: hidden; }
+        .hidden-section { max-height: 0; opacity: 0; margin: 0 !important; padding: 0 !important; border: none !important; }
+        .visible-section { max-height: 2000px; opacity: 1; }
+        /* Toast Animação */
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .toast-enter { animation: slideIn 0.3s ease-out forwards; }
+    </style>
+</head>
+<body class="p-2 md:p-8">
+
+    <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+        <!-- Header -->
+        <div class="bg-white p-6 text-center border-b border-gray-100 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2 bg-amber-600"></div>
+            <img src="ccul.jpg" alt="Logo UniLuanda" class="h-24 mx-auto mb-4 object-contain" onerror="this.style.display='none'">
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-800 uppercase tracking-tight">4ª Conferência Científica da UniLuanda</h1>
+            <p class="text-amber-600 font-semibold text-sm mt-1">Plataforma de Inscrições e Pagamentos</p>
+        </div>
+
+        <!-- 4 Tabs Navigation -->
+        <div class="flex flex-wrap border-b text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest bg-gray-50">
+            <button onclick="switchTab('inscricao')" id="tab-inscricao" class="flex-1 py-4 px-2 text-center hover:bg-amber-50 transition tab-active min-w-[25%]">Inscrição</button>
+            <button onclick="switchTab('rupe')" id="tab-rupe" class="flex-1 py-4 px-2 text-center hover:bg-amber-50 transition min-w-[25%]">RUPE</button>
+            <button onclick="switchTab('pagamento')" id="tab-pagamento" class="flex-1 py-4 px-2 text-center hover:bg-amber-50 transition min-w-[25%]">Efectuar Pagamento</button>
+            <button onclick="switchTab('recibo')" id="tab-recibo" class="flex-1 py-4 px-2 text-center hover:bg-amber-50 transition min-w-[25%]">Recibo</button>
+        </div>
+
+        <!-- Content Area -->
+        <div class="p-6 md:p-8">
+            
+            <!-- ABA 1: INSCRIÇÃO (FORMULÁRIO DINÂMICO) -->
+            <div id="content-inscricao" class="space-y-6">
+                <div class="bg-amber-50 p-4 rounded-xl border border-amber-100 text-sm text-amber-800 flex items-start mb-6">
+                    <i data-lucide="info" class="w-5 h-5 mr-3 shrink-0 mt-0.5"></i>
+                    <p>Selecione o seu <b>Tipo de Inscrição</b>. O formulário irá adaptar-se automaticamente para solicitar apenas os dados necessários para o seu perfil.</p>
+                </div>
+
+                <form id="form-inscricao" class="space-y-5">
+                    
+                    <!-- Campo Dinâmico Principal (Gatilho) -->
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Qual é o seu tipo de inscrição? <span class="text-red-500">*</span></label>
+                        <select id="tipo_inscricao" name="tipo_inscricao" required class="w-full p-3 border border-gray-300 rounded-lg outline-none focus:ring-2 ring-amber-500 bg-white font-semibold text-amber-900" onchange="handleTipoInscricao()">
+                            <option value="" disabled selected>-- Selecione uma opção --</option>
+                            <option value="Participante Geral">Participante Geral (Gratuito)</option>
+                            <option value="Empreendedor Individual/Projecto">Empreendedor Individual/Projecto (Expositor)</option>
+                            <option value="Autor">Autor (Artigo já submetido/aprovado)</option>
+                            <option value="Painelista/Preletor">Painelista / Preletor</option>
+                            <option value="Mini-Curso">Inscrição em Mini-Curso</option>
+                        </select>
+                    </div>
+
+                    <!-- DADOS GERAIS (Sempre visíveis) -->
+                    <div class="space-y-4 pt-2 border-t border-gray-100">
+                        <h4 class="font-bold text-gray-800 flex items-center"><i data-lucide="user" class="w-4 h-4 mr-2 text-amber-500"></i> Dados Pessoais</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <input type="text" name="nome" placeholder="Nome Completo *" required class="w-full p-3 border border-gray-300 rounded-lg outline-none focus:border-amber-500 focus:ring-1 ring-amber-500">
+                            <input type="text" name="bi" placeholder="N.º de BI *" required class="w-full p-3 border border-gray-300 rounded-lg outline-none focus:border-amber-500 focus:ring-1 ring-amber-500">
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <input type="email" name="email" placeholder="E-mail *" required class="w-full p-3 border border-gray-300 rounded-lg outline-none focus:border-amber-500 focus:ring-1 ring-amber-500">
+                            <input type="tel" name="telefone" placeholder="N.º de Telefone/WhatsApp *" required class="w-full p-3 border border-gray-300 rounded-lg outline-none focus:border-amber-500 focus:ring-1 ring-amber-500">
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <select name="funcao" required class="w-full p-3 border border-gray-300 rounded-lg outline-none focus:border-amber-500 focus:ring-1 ring-amber-500 bg-white">
+                                <option value="" disabled selected>Sua Função *</option>
+                                <option value="Estudante">Estudante</option>
+                                <option value="Docente">Docente</option>
+                                <option value="Docente/Investigador">Docente/Investigador</option>
+                                <option value="Empreendedor/Empresário">Empreendedor/Empresário</option>
+                                <option value="Outro">Outro</option>
+                            </select>
+                        </div>
+
+                        <!-- NOVA LÓGICA DE INSTITUIÇÃO -->
+                        <div class="col-span-1 md:col-span-2 space-y-4 bg-gray-50 p-4 rounded-xl border border-gray-200">
+                            <label class="block text-sm font-bold text-gray-700">Vínculo Institucional <span class="text-red-500">*</span></label>
+                            <select id="tipo_vinculo" name="tipo_vinculo" required class="w-full p-3 border border-gray-300 rounded-lg outline-none focus:border-amber-500 focus:ring-1 ring-amber-500 bg-white" onchange="handleVinculo()">
+                                <option value="" disabled selected>Selecione a sua Instituição...</option>
+                                <option value="Universidade de Luanda">Universidade de Luanda</option>
+                                <option value="Outra">Outra Instituição / Empresa</option>
+                            </select>
+
+                            <!-- Divisão "Outra" -->
+                            <div id="vinculo_outra" class="hidden mt-4">
+                                <input type="text" id="nome_instituicao" name="nome_instituicao" placeholder="Nome da Instituição / Empresa *" class="w-full p-3 border border-gray-300 rounded-lg outline-none focus:border-amber-500 focus:ring-1 ring-amber-500">
+                            </div>
+
+                            <!-- Divisão "UniLuanda" (Cascata) -->
+                            <div id="vinculo_uniluanda" class="hidden space-y-4 mt-4 pt-4 border-t border-gray-200">
+                                <select id="unidade_organica" name="unidade_organica" class="w-full p-3 border border-gray-300 rounded-lg outline-none focus:border-amber-500 bg-white" onchange="handleUnidade()">
+                                    <option value="" disabled selected>Selecione a Unidade Orgânica *</option>
+                                    <option value="Reitoria">Reitoria</option>
+                                    <option value="FaArtes">FaArtes</option>
+                                    <option value="FSS">FSS</option>
+                                    <option value="IPGEST">IPGEST</option>
+                                    <option value="INSTIC">INSTIC</option>
+                                </select>
+
+                                <div id="div_curso" class="hidden">
+                                    <select id="curso_uniluanda" name="curso_uniluanda" class="w-full p-3 border border-gray-300 rounded-lg outline-none focus:border-amber-500 bg-white">
+                                        <!-- Cursos preenchidos via JS -->
+                                    </select>
+                                </div>
+
+                                <div id="div_nivel" class="hidden">
+                                    <select id="nivel_academico" name="nivel_academico" class="w-full p-3 border border-gray-300 rounded-lg outline-none focus:border-amber-500 bg-white">
+                                        <option value="" disabled selected>Nível Académico *</option>
+                                        <option value="1º Ano">1º Ano</option>
+                                        <option value="2º Ano">2º Ano</option>
+                                        <option value="3º Ano">3º Ano</option>
+                                        <option value="Finalista">Finalista</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Upload do BI Geral -->
+                        <div class="border-2 border-dashed border-gray-300 p-4 rounded-lg text-center bg-gray-50 hover:bg-amber-50 transition">
+                            <label class="cursor-pointer block">
+                                <span class="text-gray-600 text-sm font-medium"><i data-lucide="upload" class="inline w-4 h-4 mr-1"></i> Anexar Cópia do BI (PDF/IMG) *</span>
+                                <input type="file" id="file-bi" class="hidden" accept=".pdf, .png, .jpg, .jpeg" required onchange="document.getElementById('bi-status').innerText = this.files[0].name">
+                                <div id="bi-status" class="text-xs text-amber-600 mt-2 font-bold"></div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- SECÇÃO DINÂMICA: EMPREENDEDOR / PROJECTO -->
+                    <div id="sec-empreendedor" class="dynamic-section hidden-section space-y-4 pt-4 border-t border-gray-100">
+                        <h4 class="font-bold text-gray-800 flex items-center"><i data-lucide="briefcase" class="w-4 h-4 mr-2 text-amber-500"></i> Dados da Exposição / Projecto</h4>
+                        <div class="bg-blue-50 p-3 rounded-lg text-xs text-blue-800 mb-2 border border-blue-100">
+                            <b>Taxa: 10.000 KZ</b> - Condições: Tenda e meios próprios. (Após enviar, aguarde a sua RUPE).
+                        </div>
+                        <input type="text" id="emp-nome" name="nome_projecto" placeholder="Nome do Projecto - MARCA *" class="w-full p-3 border border-gray-300 rounded-lg outline-none focus:border-amber-500">
+                        <textarea id="emp-desc" name="descricao_projecto" placeholder="Descrição/caracterização do Projecto - MARCA *" rows="2" class="w-full p-3 border border-gray-300 rounded-lg outline-none focus:border-amber-500"></textarea>
+                        <input type="text" id="emp-coord" name="coordenacao_projecto" placeholder="Coordenação do Projecto (Incluir Contactos) *" class="w-full p-3 border border-gray-300 rounded-lg outline-none focus:border-amber-500">
+                        <textarea id="emp-solucao" name="solucao_projecto" placeholder="Solução que o Projecto - MARCA oferece *" rows="2" class="w-full p-3 border border-gray-300 rounded-lg outline-none focus:border-amber-500"></textarea>
+                        
+                        <!-- Upload Ficheiro da Proposta -->
+                        <div class="border-2 border-dashed border-gray-300 p-4 rounded-lg text-center bg-gray-50 hover:bg-amber-50 transition">
+                            <label class="cursor-pointer block">
+                                <span class="text-gray-600 text-sm font-medium"><i data-lucide="upload" class="inline w-4 h-4 mr-1"></i> Inserir proposta do Projecto (Memória Descritiva) *</span>
+                                <span class="text-xs text-gray-400 block mt-1">Formatos aceites: PDF, DOCX, PPT, PPTX (Máx. 10MB)</span>
+                                <input type="file" id="file-proposta" accept=".pdf, .doc, .docx, .ppt, .pptx" class="hidden" onchange="document.getElementById('proposta-status').innerText = this.files[0].name">
+                                <div id="proposta-status" class="text-xs text-amber-600 mt-2 font-bold"></div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- SECÇÃO DINÂMICA: AUTOR -->
+                    <div id="sec-autor" class="dynamic-section hidden-section space-y-4 pt-4 border-t border-gray-100">
+                        <h4 class="font-bold text-gray-800 flex items-center"><i data-lucide="file-text" class="w-4 h-4 mr-2 text-amber-500"></i> Dados do Artigo (Validação)</h4>
+                        <div class="bg-emerald-50 p-3 rounded-lg text-xs text-emerald-800 mb-2 border border-emerald-100">
+                            <b>Atenção:</b> Os artigos já foram submetidos e aprovados pela organização. Preencha os dados abaixo apenas para validar a sua inscrição e gerar a RUPE de confirmação.
+                        </div>
+                        <input type="text" id="aut-titulo" name="titulo_artigo" placeholder="Título do Artigo / Trabalho *" class="w-full p-3 border border-gray-300 rounded-lg outline-none focus:border-amber-500">
+                        <textarea id="aut-resumo" name="resumo_artigo" placeholder="Resumo do Trabalho (Abstract) *" rows="3" class="w-full p-3 border border-gray-300 rounded-lg outline-none focus:border-amber-500"></textarea>
+                    </div>
+
+                    <!-- SECÇÃO DINÂMICA: MINI-CURSOS -->
+                    <div id="sec-minicursos" class="dynamic-section hidden-section space-y-4 pt-4 border-t border-gray-100">
+                        <h4 class="font-bold text-gray-800 flex items-center"><i data-lucide="book-open" class="w-4 h-4 mr-2 text-amber-500"></i> Seleção de Mini-Curso</h4>
+                        <select id="curso_selecionado" name="curso_selecionado" class="w-full p-3 border border-gray-300 rounded-lg outline-none focus:border-amber-500 focus:ring-1 ring-amber-500 bg-white" onchange="handleMiniCurso()">
+                            <option value="" disabled selected>Escolha o Mini-Curso desejado *</option>
+                            <option value="Metodologia Científica Básica|Gratuito" data-preco="0">Metodologia Científica Básica (Gratuito)</option>
+                            <option value="Introdução à Inteligência Artificial|Gratuito" data-preco="0">Introdução à Inteligência Artificial (Gratuito)</option>
+                            <option value="Análise de Dados com SPSS|Gratuito" data-preco="0">Análise de Dados com SPSS (Gratuito)</option>
+                            <option value="Gestão de Projectos Ágeis|5000" data-preco="5000">Gestão de Projectos Ágeis (5.000 KZ)</option>
+                            <option value="Empreendedorismo Digital|5000" data-preco="5000">Empreendedorismo Digital (5.000 KZ)</option>
+                            <option value="Redação de Artigos Internacionais|8000" data-preco="8000">Redação de Artigos Internacionais (8.000 KZ)</option>
+                        </select>
+                        <div id="aviso-curso-pago" class="hidden bg-blue-50 p-3 rounded-lg text-sm text-blue-800 border border-blue-100">
+                            <b>Atenção:</b> Este curso requer o pagamento de <span id="valor-curso" class="font-black"></span> KZ. A sua RUPE será gerada após a solicitação.
+                        </div>
+                    </div>
+
+                    <!-- BOTÃO DINÂMICO -->
+                    <div class="pt-6">
+                        <button type="submit" id="btn-submit-inscricao" class="w-full bg-amber-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-amber-700 transition shadow-xl shadow-amber-600/30 flex justify-center items-center">
+                            Selecione um Tipo de Inscrição
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- ABA 2: RUPE (Consulta) -->
+            <div id="content-rupe" class="hidden space-y-6">
+                <div class="bg-blue-50 p-6 rounded-2xl border border-blue-100">
+                    <h3 class="text-xl font-bold text-gray-800 mb-2 flex items-center"><i data-lucide="file-spreadsheet" class="mr-2 text-blue-600"></i> Consultar RUPE Emitida</h3>
+                    <p class="text-sm text-gray-600 mb-6">Se efetuou uma inscrição que requer pagamento (Ex: Expositor ou Curso Pago), digite o seu BI para baixar a RUPE.</p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <input type="text" id="bi-consulta-rupe" placeholder="N.º do Bilhete de Identidade" class="flex-1 p-4 border border-gray-300 rounded-xl outline-none focus:border-blue-500 focus:ring-1 ring-blue-500">
+                        <button onclick="consultarDrive('rupe')" class="bg-blue-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700 transition flex items-center justify-center shadow-lg shadow-blue-200">
+                            <i data-lucide="search" class="w-5 h-5 mr-2"></i> Buscar RUPE
+                        </button>
+                    </div>
+                    <div id="res-rupe" class="mt-6"></div>
+                </div>
+            </div>
+
+            <!-- ABA 3: EFECTUAR PAGAMENTO -->
+            <div id="content-pagamento" class="hidden space-y-6">
+                <h3 class="text-xl font-bold text-gray-800 flex items-center border-b pb-4"><i data-lucide="upload-cloud" class="mr-2 text-emerald-500"></i> Enviar Comprovativo de Pagamento</h3>
+                <p class="text-sm text-gray-600">Após realizar o pagamento da sua RUPE, envie o comprovativo (PDF ou Fotografia) para validarmos a sua inscrição final.</p>
+                
+                <form id="form-pagamento" class="space-y-5 bg-gray-50 p-6 rounded-2xl border border-gray-100">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <input type="text" name="nome" placeholder="Nome Completo *" required class="w-full p-4 border border-gray-300 rounded-xl outline-none focus:border-emerald-500 focus:ring-1 ring-emerald-500">
+                        <input type="text" name="bi" placeholder="N.º de BI *" required class="w-full p-4 border border-gray-300 rounded-xl outline-none focus:border-emerald-500 focus:ring-1 ring-emerald-500">
+                    </div>
+                    
+                    <div class="border-2 border-dashed border-emerald-200 p-8 rounded-xl text-center bg-white hover:bg-emerald-50 transition">
+                        <label class="cursor-pointer block">
+                            <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3"><i data-lucide="receipt"></i></div>
+                            <span class="text-gray-700 font-semibold block mb-1">Anexar Comprovativo Bancário *</span>
+                            <span class="text-xs text-gray-400 block mb-4">Formatos aceites: PDF, JPG, PNG</span>
+                            
+                            <input type="file" id="file-comp" class="hidden" accept=".pdf, .png, .jpg, .jpeg" required onchange="document.getElementById('comp-status').innerText = this.files[0].name">
+                            <div id="comp-status" class="text-sm text-emerald-600 font-bold bg-emerald-50 inline-block px-4 py-1 rounded-full empty:hidden"></div>
+                        </label>
+                    </div>
+                    <button type="submit" class="w-full bg-emerald-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-emerald-700 transition shadow-xl shadow-emerald-600/30">Enviar Comprovativo</button>
+                </form>
+            </div>
+
+            <!-- ABA 4: RECIBO / FICHA -->
+            <div id="content-recibo" class="hidden space-y-6">
+                <div class="bg-amber-50 p-6 rounded-2xl border border-amber-100">
+                    <h3 class="text-xl font-bold text-gray-800 mb-2 flex items-center"><i data-lucide="award" class="mr-2 text-amber-600"></i> Consultar Ficha de Inscrição / Recibo</h3>
+                    <p class="text-sm text-gray-600 mb-6">Insira o seu N.º de BI para obter a sua ficha de inscrição validada. É o seu passe de entrada para a Conferência.</p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <input type="text" id="bi-consulta-recibo" placeholder="N.º do Bilhete de Identidade" class="flex-1 p-4 border border-gray-300 rounded-xl outline-none focus:border-amber-500 focus:ring-1 ring-amber-500">
+                        <button onclick="consultarDrive('ficha')" class="bg-amber-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-amber-700 transition flex items-center justify-center shadow-lg shadow-amber-200">
+                            <i data-lucide="download" class="w-5 h-5 mr-2"></i> Obter Recibo
+                        </button>
+                    </div>
+                    <div id="res-ficha" class="mt-6"></div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer Info -->
+        <div class="bg-gray-800 p-4 text-center text-xs text-gray-400 tracking-wider">
+            Powered by EmanaForms Pro & V-mailJS &copy; 2026 UniLuanda
+        </div>
+    </div>
+
+    <!-- Modais de Feedback e Container de Toasts -->
+    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-3"></div>
+
+    <div id="status-modal" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center p-4 z-50 backdrop-blur-sm transition-opacity">
+        <div class="bg-white p-8 rounded-2xl max-w-sm w-full text-center shadow-2xl transform scale-100 transition-transform">
+            <div id="modal-icon" class="mb-5 flex justify-center"></div>
+            <h4 id="modal-title" class="font-black text-xl mb-2 text-gray-800"></h4>
+            <p id="modal-msg" class="text-gray-500 text-sm mb-8 leading-relaxed"></p>
+            <button onclick="fecharModal()" class="w-full bg-gray-900 text-white py-3 rounded-xl font-bold hover:bg-black transition">Compreendido</button>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // CONFIGURAÇÃO DOS MOTORES DE DADOS
+        // ==========================================
+        
+        // 1. Motor de Envio de E-mails e Uploads (V-mailJS)
+        const URL_V_MAILJS = "https://script.google.com/macros/s/AKfycbx8a33FSI3rNqUS-HQwV1oOOPGjiJ1PAnVFRgSTo2WalDw99dHLikS5AIL75GYWtNXRjw/exec";
+        
+        // 2. Motor de Consulta no Drive (V-Drive)
+        const URL_V_DRIVE = "https://script.google.com/macros/s/AKfycbwk2MkTUpcFneYE0y5VJBBUJ5llO0lwKTWOJAg5K0xr7bVpi3vWVpxCpNEMc4BP78zq/exec";
+        
+        // 3. EmanaForms / Firebase (Endpoint Padrão REST API do Firestore)
+        const URL_EMANA_FORMS = "https://firestore.googleapis.com/v1/projects/emanaforms/databases/(default)/documents/responses"; 
+        
+        // =========================================================
+        // IMPORTANTE: COLE AQUI O ID DA SUA NOVA TABELA GERADA!
+        // =========================================================
+        const TABLE_ID_EMANA_FORMS = "1775510153239"; 
+        
+        // E-mails da Comissão (Receptores dos Comprovativos/Inscrições)
+        const EMAILS_DESTINO = ["emawalunga11@gmail.com", "emanuel.booka@gmail.com", "miltonneto2023@gmail.com"];
+
+        lucide.createIcons();
+
+        // ==========================================
+        // UTILITÁRIOS DA UI E TOASTS (Conforme pedido)
+        // ==========================================
+
+        function showToast(title, message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const isSuccess = type === 'success';
+            
+            toast.className = `toast-enter flex items-start p-4 w-80 rounded-xl shadow-lg border ${isSuccess ? 'bg-green-50 border-green-200 text-green-800' : 'bg-red-50 border-red-200 text-red-800'}`;
+            toast.innerHTML = `
+                <div class="mr-3 mt-0.5">
+                    ${isSuccess ? '<svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>' : '<svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>'}
+                </div>
+                <div class="flex-1">
+                    <h4 class="font-bold text-sm">${title}</h4>
+                    <p class="text-xs opacity-90 mt-1">${message}</p>
+                </div>
+            `;
+            
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                toast.style.transition = 'all 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        function abrirModal(title, msg, type) {
+            const modal = document.getElementById('status-modal');
+            const iconDiv = document.getElementById('modal-icon');
+            
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.firstElementChild.classList.add('scale-100'), 10);
+            
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-msg').innerText = msg;
+
+            if(type === 'loading') iconDiv.innerHTML = '<div class="loading-spinner w-16 h-16 border-4"></div>';
+            if(type === 'success') iconDiv.innerHTML = '<div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center"><i data-lucide="check-circle" class="w-8 h-8"></i></div>';
+            if(type === 'error') iconDiv.innerHTML = '<div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center"><i data-lucide="alert-triangle" class="w-8 h-8"></i></div>';
+            lucide.createIcons();
+        }
+
+        function fecharModal() {
+            document.getElementById('status-modal').classList.add('hidden');
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('[id^="content-"]').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('[id^="tab-"]').forEach(el => {
+                el.classList.remove('tab-active', 'bg-amber-50');
+            });
+            document.getElementById(`content-${tab}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-${tab}`);
+            activeBtn.classList.add('tab-active');
+        }
+
+        // ==========================================
+        // LÓGICA DO FORMULÁRIO DINÂMICO
+        // ==========================================
+
+        const mapCursosUniLuanda = {
+            'FaArtes': ['Gestão e Produção Cultural', 'Música', 'Teatro'],
+            'FSS': ['Serviço Social', 'Relações Internacionais'],
+            'IPGEST': ['Contabilidade', 'Eng. de Transporte', 'Eng. Mecatrónica', 'Eng. Informática', 'Gestão', 'Gestão Aeronáutica', 'Gestão de Logística e Transporte', 'Informática de Gestão', 'Mestrado em Gestão e Empreendedorismo', 'Mestrado em Planeamento das Operações de Transportes', 'Mestrado em Gestão Aeronáutica e Aeroportuária'],
+            'INSTIC': ['Engenharia Informática', 'Engenharia de Telecomunicações', 'Informática de Gestão']
+        };
+        
+        function requiredFields(sectionId, isRequired) {
+            const section = document.getElementById(sectionId);
+            const inputs = section.querySelectorAll('input, textarea, select');
+            inputs.forEach(input => {
+                if(input.id !== 'file-proposta') { 
+                    input.required = isRequired;
+                }
+            });
+            if(sectionId === 'sec-empreendedor') {
+                document.getElementById('file-proposta').required = isRequired;
+            }
+        }
+
+        function handleVinculo() {
+            const vinculo = document.getElementById('tipo_vinculo').value;
+            const divOutra = document.getElementById('vinculo_outra');
+            const divUni = document.getElementById('vinculo_uniluanda');
+            
+            if (vinculo === 'Outra') {
+                divOutra.classList.remove('hidden');
+                divUni.classList.add('hidden');
+                document.getElementById('nome_instituicao').required = true;
+                document.getElementById('unidade_organica').required = false;
+                document.getElementById('curso_uniluanda').required = false;
+                document.getElementById('nivel_academico').required = false;
+            } else if (vinculo === 'Universidade de Luanda') {
+                divOutra.classList.add('hidden');
+                divUni.classList.remove('hidden');
+                document.getElementById('nome_instituicao').required = false;
+                document.getElementById('unidade_organica').required = true;
+                handleUnidade();
+            }
+        }
+
+        function handleUnidade() {
+            const unidade = document.getElementById('unidade_organica').value;
+            const divCurso = document.getElementById('div_curso');
+            const divNivel = document.getElementById('div_nivel');
+            const selCurso = document.getElementById('curso_uniluanda');
+            
+            if (unidade === 'Reitoria' || !unidade) {
+                divCurso.classList.add('hidden');
+                divNivel.classList.add('hidden');
+                document.getElementById('curso_uniluanda').required = false;
+                document.getElementById('nivel_academico').required = false;
+            } else {
+                divCurso.classList.remove('hidden');
+                divNivel.classList.remove('hidden');
+                document.getElementById('curso_uniluanda').required = true;
+                document.getElementById('nivel_academico').required = true;
+                
+                // Preencher cursos
+                selCurso.innerHTML = '<option value="" disabled selected>Selecione o Curso *</option>';
+                mapCursosUniLuanda[unidade].forEach(curso => {
+                    const opt = document.createElement('option');
+                    opt.value = curso; opt.textContent = curso;
+                    selCurso.appendChild(opt);
+                });
+            }
+        }
+
+        function handleTipoInscricao() {
+            const tipo = document.getElementById('tipo_inscricao').value;
+            const btn = document.getElementById('btn-submit-inscricao');
+            
+            document.querySelectorAll('.dynamic-section').forEach(el => {
+                el.classList.remove('visible-section');
+                el.classList.add('hidden-section');
+            });
+            requiredFields('sec-empreendedor', false);
+            requiredFields('sec-autor', false);
+            requiredFields('sec-minicursos', false);
+
+            if (tipo === 'Participante Geral') {
+                btn.innerHTML = '<i data-lucide="check-circle" class="mr-2"></i> Realizar Inscrição';
+            } 
+            else if (tipo === 'Empreendedor Individual/Projecto') {
+                const sec = document.getElementById('sec-empreendedor');
+                sec.classList.remove('hidden-section'); sec.classList.add('visible-section');
+                requiredFields('sec-empreendedor', true);
+                btn.innerHTML = '<i data-lucide="file-text" class="mr-2"></i> Solicitar RUPE';
+            }
+            else if (tipo === 'Autor') {
+                // Autores não anexam ficheiro nesta fase. Só pedem a RUPE e validam.
+                const sec = document.getElementById('sec-autor');
+                sec.classList.remove('hidden-section'); sec.classList.add('visible-section');
+                requiredFields('sec-autor', true);
+                btn.innerHTML = '<i data-lucide="file-text" class="mr-2"></i> Solicitar RUPE de Inscrição';
+            }
+            else if (tipo === 'Painelista/Preletor') {
+                btn.innerHTML = '<i data-lucide="check-circle" class="mr-2"></i> Confirmar Inscrição';
+            }
+            else if (tipo === 'Mini-Curso') {
+                const sec = document.getElementById('sec-minicursos');
+                sec.classList.remove('hidden-section'); sec.classList.add('visible-section');
+                requiredFields('sec-minicursos', true);
+                handleMiniCurso();
+            }
+            lucide.createIcons();
+        }
+
+        function handleMiniCurso() {
+            const select = document.getElementById('curso_selecionado');
+            if(!select.value) return;
+            const preco = parseInt(select.options[select.selectedIndex].getAttribute('data-preco'));
+            const btn = document.getElementById('btn-submit-inscricao');
+            const aviso = document.getElementById('aviso-curso-pago');
+
+            if (preco > 0) {
+                aviso.classList.remove('hidden');
+                document.getElementById('valor-curso').innerText = preco;
+                btn.innerHTML = '<i data-lucide="file-text" class="mr-2"></i> Solicitar RUPE (Pagamento)';
+            } else {
+                aviso.classList.add('hidden');
+                btn.innerHTML = '<i data-lucide="check-circle" class="mr-2"></i> Fazer Inscrição Gratuita';
+            }
+            lucide.createIcons();
+        }
+
+        // ==========================================
+        // MOTORES DE ENVIO (V-MAILJS + EMANAFORMS)
+        // ==========================================
+
+        const toBase64 = file => new Promise((resolve, reject) => {
+            if(!file) return resolve(null);
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result.split(',')[1]);
+            reader.onerror = error => reject(error);
+        });
+
+        function cleanUnusedFields(dataObj) {
+            // Limpa dados das condicionais de Instituição para não sujar o Firebase
+            if (dataObj.tipo_vinculo === 'Universidade de Luanda') {
+                delete dataObj.nome_instituicao;
+                dataObj.instituicao = 'Universidade de Luanda';
+                if(dataObj.unidade_organica === 'Reitoria') {
+                    delete dataObj.curso_uniluanda; delete dataObj.nivel_academico;
+                }
+            } else if (dataObj.tipo_vinculo === 'Outra') {
+                dataObj.instituicao = dataObj.nome_instituicao;
+                delete dataObj.nome_instituicao;
+                delete dataObj.unidade_organica; delete dataObj.curso_uniluanda; delete dataObj.nivel_academico;
+            }
+
+            // Limpa dados de tipos de inscrição não selecionados
+            const tipo = dataObj.tipo_inscricao;
+            if(tipo !== 'Empreendedor Individual/Projecto') {
+                delete dataObj.nome_projecto; delete dataObj.descricao_projecto; delete dataObj.coordenacao_projecto; delete dataObj.solucao_projecto;
+            }
+            if(tipo !== 'Autor') {
+                delete dataObj.titulo_artigo; delete dataObj.resumo_artigo;
+            }
+            if(tipo !== 'Mini-Curso') {
+                delete dataObj.curso_selecionado;
+            }
+            return dataObj;
+        }
+
+        async function enviarDadosCompletos(formDataObject, filesArray, tableName, acaoPendente, originalHtml, btnElement) {
+            
+            // Ativar Loading Animado no Botão
+            btnElement.innerHTML = '<svg class="animate-spin h-5 w-5 mr-3 text-white inline" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> A Processar...';
+            btnElement.disabled = true;
+
+            try {
+                // 1. Tratamento dos anexos e construção de objetos separados
+                const attachments = [];
+                let emanaFormsData = cleanUnusedFields({ ...formDataObject });
+
+                for (const item of filesArray) {
+                    if(item.file) {
+                        const base64 = await toBase64(item.file);
+                        attachments.push({
+                            fileName: item.file.name,
+                            mimeType: item.file.type,
+                            data: base64
+                        });
+                        // Para o banco de dados (Firebase) mandamos apenas texto leve
+                        emanaFormsData[item.label] = `[Ficheiro Drive: ${item.file.name}]`;
+                    }
+                }
+
+                // 2. Envio para Banco de Dados Firebase via EmanaForms REST API
+                let emanaPromise = Promise.resolve();
+                if(TABLE_ID_EMANA_FORMS && TABLE_ID_EMANA_FORMS !== "COLE_AQUI_O_ID_DA_TABELA_DO_EMANA_FORMS") {
+                    const payloadFirebase = {
+                        fields: {
+                            tableId: { stringValue: TABLE_ID_EMANA_FORMS },
+                            dataStr: { stringValue: JSON.stringify(emanaFormsData) },
+                            createdAt: { timestampValue: new Date().toISOString() }
+                        }
+                    };
+                    emanaPromise = fetch(URL_EMANA_FORMS, { 
+                        method: 'POST', 
+                        body: JSON.stringify(payloadFirebase) 
+                    }).then(res => {
+                        if(!res.ok) throw new Error("Erro de comunicação com o EmanaForms/Firebase");
+                    });
+                }
+
+                // 3. Envio para Google Apps Script (Email/Drive Upload)
+                const payloadEmail = {
+                    emails: EMAILS_DESTINO,
+                    tableName: tableName,
+                    data: formDataObject,
+                    attachments: attachments
+                };
+                
+                const vmailPromise = fetch(URL_V_MAILJS, {
+                    method: 'POST',
+                    mode: 'no-cors', // Fundamental para não travar no navegador
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payloadEmail)
+                });
+
+                // Espera pelos dois sistemas finalizarem
+                await Promise.all([vmailPromise, emanaPromise]);
+
+                // 4. Feedback de Sucesso
+                let msgSucesso = "";
+                if (acaoPendente === 'ESPERAR_RUPE') {
+                    msgSucesso = "A sua inscrição foi recebida! A sua RUPE será processada e estará disponível na aba 'RUPE' brevemente.";
+                } else if (acaoPendente === 'ESPERAR_RECIBO') {
+                    msgSucesso = "Inscrição validada com sucesso! Verifique a aba 'Recibo' mais tarde para obter o seu passe.";
+                } else if (acaoPendente === 'COMPROVATIVO_ENVIADO') {
+                    msgSucesso = "Comprovativo enviado com sucesso! Após validação, a sua Ficha de Inscrição final estará disponível na aba 'Recibo'.";
+                }
+
+                showToast('Sucesso!', msgSucesso, 'success');
+                return true;
+
+            } catch (err) {
+                console.error(err);
+                showToast('Erro de Conexão', 'Não foi possível concluir o envio. Verifique a internet e tente novamente.', 'error');
+                return false;
+            } finally {
+                // Restaura o botão
+                btnElement.innerHTML = originalHtml;
+                btnElement.disabled = false;
+                lucide.createIcons();
+            }
+        }
+
+        // ==========================================
+        // SUBMISSÃO DE FORMULÁRIOS
+        // ==========================================
+
+        document.getElementById('form-inscricao').onsubmit = async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const btn = form.querySelector('button[type="submit"]');
+            const originalHtml = btn.innerHTML;
+
+            const fd = new FormData(form);
+            const dataObj = Object.fromEntries(fd.entries());
+            const tipo = dataObj.tipo_inscricao;
+
+            // Ficheiros
+            const files = [];
+            const biInput = document.getElementById('file-bi');
+            if(biInput.files.length > 0) files.push({ label: 'Cópia BI', file: biInput.files[0] });
+
+            if(tipo === 'Empreendedor Individual/Projecto') {
+                const propostaInput = document.getElementById('file-proposta');
+                if(propostaInput.files.length > 0) files.push({ label: 'Proposta do Projecto', file: propostaInput.files[0] });
+            }
+
+            // Ações Pós-Envio
+            let acao = 'ESPERAR_RECIBO'; 
+            let tableName = `Inscrição: ${tipo} - 4ª CCUL`;
+
+            if (tipo === 'Empreendedor Individual/Projecto' || tipo === 'Autor') {
+                acao = 'ESPERAR_RUPE';
+            } 
+            else if (tipo === 'Mini-Curso') {
+                const cursoStr = document.getElementById('curso_selecionado').value;
+                const preco = parseInt(document.getElementById('curso_selecionado').options[document.getElementById('curso_selecionado').selectedIndex].getAttribute('data-preco'));
+                dataObj.Curso = cursoStr.split('|')[0];
+                if (preco > 0) acao = 'ESPERAR_RUPE';
+            }
+
+            const sucesso = await enviarDadosCompletos(dataObj, files, tableName, acao, originalHtml, btn);
+            if(sucesso) {
+                form.reset();
+                document.getElementById('bi-status').innerText = "";
+                if(document.getElementById('proposta-status')) document.getElementById('proposta-status').innerText = "";
+                document.getElementById('vinculo_outra').classList.add('hidden');
+                document.getElementById('vinculo_uniluanda').classList.add('hidden');
+                handleTipoInscricao();
+            }
+        };
+
+        document.getElementById('form-pagamento').onsubmit = async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const btn = form.querySelector('button[type="submit"]');
+            const originalHtml = btn.innerHTML;
+
+            const dataObj = { Nome: form.nome.value, BI: form.bi.value, Tipo: "Envio de Comprovativo" };
+            const fileInput = document.getElementById('file-comp');
+            const files = [{ label: 'Comprovativo Bancário', file: fileInput.files[0] }];
+
+            const sucesso = await enviarDadosCompletos(dataObj, files, "Comprovativos de Pagamento - 4ª CCUL", 'COMPROVATIVO_ENVIADO', originalHtml, btn);
+            if(sucesso) {
+                form.reset();
+                document.getElementById('comp-status').innerText = "";
+            }
+        };
+
+        // ==========================================
+        // CONSULTA AO V-DRIVE (RUPE & FICHA)
+        // ==========================================
+        async function consultarDrive(tipo) {
+            let bi = "";
+            let resDiv = null;
+
+            if (tipo === 'rupe') {
+                bi = document.getElementById('bi-consulta-rupe').value;
+                resDiv = document.getElementById('res-rupe');
+            } else if (tipo === 'ficha') {
+                bi = document.getElementById('bi-consulta-recibo').value;
+                resDiv = document.getElementById('res-ficha');
+            }
+            
+            if(!bi) { showToast("Aviso", "Por favor, digite o N.º do seu BI.", "error"); return; }
+
+            resDiv.innerHTML = '<div class="flex items-center text-amber-600 text-sm font-bold"><div class="loading-spinner mr-2"></div> A procurar no sistema...</div>';
+
+            try {
+                const response = await fetch(`${URL_V_DRIVE}?bi=${bi}&tipo=${tipo}`);
+                const result = await response.json();
+
+                if (result.encontrado) {
+                    const bgClass = tipo === 'rupe' ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-amber-50 border-amber-200 text-amber-700';
+                    const btnClass = tipo === 'rupe' ? 'bg-blue-600 hover:bg-blue-700' : 'bg-amber-600 hover:bg-amber-700';
+                    const docName = tipo === 'rupe' ? 'Documento RUPE' : 'Ficha de Inscrição';
+
+                    resDiv.innerHTML = `
+                        <div class="${bgClass} p-5 border rounded-xl animate-pulse shadow-sm mt-4">
+                            <p class="font-bold text-sm mb-3">✅ Documento Encontrado!</p>
+                            <a href="${result.url}" target="_blank" class="inline-block ${btnClass} text-white px-6 py-3 rounded-lg font-bold text-sm uppercase tracking-wider shadow-md">Baixar ${docName}</a>
+                        </div>
+                    `;
+                } else {
+                    resDiv.innerHTML = `
+                        <div class="bg-red-50 p-4 border border-red-200 rounded-xl text-red-700 text-sm font-medium flex items-center mt-4">
+                            <i data-lucide="alert-circle" class="w-5 h-5 mr-2"></i> ${result.msg || "O documento ainda não foi gerado. Tente mais tarde."}
+                        </div>
+                    `;
+                    lucide.createIcons();
+                }
+            } catch (err) {
+                resDiv.innerHTML = `<p class="text-red-600 font-bold text-sm bg-red-50 p-3 rounded-lg mt-4"><i data-lucide="wifi-off" class="inline w-4 h-4 mr-1"></i> Erro de comunicação com o servidor.</p>`;
+                lucide.createIcons();
+            }
+        }
+    </script>
+</body>
+</html>
